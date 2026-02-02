@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { BookOpen, BookmarkPlus, Zap, Crown, AlertCircle } from "lucide-react"
 import { CheckoutButton } from "@/components/stripe/CheckoutButton"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 export interface UsageData {
   wordsRead: number
@@ -296,7 +297,8 @@ export default function ReaderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-5xl space-y-6">
           <div className="flex items-center justify-between mb-8">
@@ -458,5 +460,6 @@ export default function ReaderPage() {
         <UpgradePrompt onDismiss={() => setShowUpgradePrompt(false)} />
       )}
     </div>
+    </ErrorBoundary>
   )
 }

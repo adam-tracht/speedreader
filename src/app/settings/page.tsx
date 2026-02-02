@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react"
 import { Crown, CreditCard } from "lucide-react"
 import { CheckoutButton } from "@/components/stripe/CheckoutButton"
 import { useRouter } from "next/navigation"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 export default function SettingsPage() {
   const { user } = useSession()
@@ -94,7 +95,8 @@ export default function SettingsPage() {
   const isPremium = tier === "premium"
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <div className="mb-8">
           <button
@@ -234,5 +236,6 @@ export default function SettingsPage() {
         )}
       </div>
     </div>
+    </ErrorBoundary>
   )
 }

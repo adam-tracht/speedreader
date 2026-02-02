@@ -5,6 +5,7 @@ import { getSession } from "@/lib/session"
 import Link from "next/link"
 import { Book, History, Home, LogOut } from "lucide-react"
 import PWAInstallPrompt from "@/components/PWAInstallPrompt"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -146,7 +147,9 @@ export default async function RootLayout({
             </div>
           </header>
           <main className="flex-1">
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
           </main>
         </div>
         <PWAInstallPrompt />

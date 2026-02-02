@@ -5,6 +5,7 @@ import { useSession } from "@/hooks/useSession"
 import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 export default function LibraryPage() {
   const { user } = useSession()
@@ -42,7 +43,8 @@ export default function LibraryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">My Library</h1>
@@ -128,5 +130,6 @@ export default function LibraryPage() {
         )}
       </div>
     </div>
+    </ErrorBoundary>
   )
 }

@@ -3,6 +3,7 @@
 import { useReadingHistory } from "@/hooks/useReadingHistory"
 import { useSession } from "@/hooks/useSession"
 import Link from "next/link"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 interface ReadingHistoryEntry {
   id: string
@@ -67,7 +68,8 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">Reading History</h1>
@@ -159,5 +161,6 @@ export default function HistoryPage() {
         )}
       </div>
     </div>
+    </ErrorBoundary>
   )
 }
