@@ -1,11 +1,11 @@
+"use client"
+
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { Play, Pause, SkipForward, SkipBack, Zap, BookOpen, History, TrendingUp, Shield, Clock, CheckCircle, ArrowRight } from "lucide-react"
-"use client"
-
-import { useState, useEffect, useRef } from "react"
 
 export default function LandingPage() {
   const [demoPlaying, setDemoPlaying] = useState(false)
