@@ -4,6 +4,7 @@ import "./globals.css"
 import { getSession } from "@/lib/session"
 import Link from "next/link"
 import { Book, History, Home, LogOut } from "lucide-react"
+import PWAInstallPrompt from "@/components/PWAInstallPrompt"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -12,6 +13,15 @@ export const metadata: Metadata = {
   description: "Stop losing focus. RSVP speed reading eliminates eye movement and peripheral distractions. Read 3x faster, retain more, and finish articles in 1/3 the time. Try free today.",
   keywords: ["speed reading", "RSVP", "read faster", "productivity", "rapid serial visual presentation"],
   authors: [{ name: "SpeedReader" }],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SpeedReader",
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     title: "SpeedReader - Read 3x Faster",
     description: "Read 3x faster with RSVP speed reading. Eliminate eye movement and peripheral distractions.",
@@ -22,6 +32,21 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SpeedReader - Read 3x Faster",
     description: "Read 3x faster with RSVP speed reading. Try free today.",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-72x72.png", sizes: "72x72", type: "image/png" },
+      { url: "/icons/icon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icons/icon-128x128.png", sizes: "128x128", type: "image/png" },
+      { url: "/icons/icon-144x144.png", sizes: "144x144", type: "image/png" },
+      { url: "/icons/icon-152x152.png", sizes: "152x152", type: "image/png" },
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-384x384.png", sizes: "384x384", type: "image/png" },
+      { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icons/icon-152x152.png", sizes: "152x152", type: "image/png" },
+    ],
   },
 }
 
@@ -124,6 +149,7 @@ export default async function RootLayout({
             {children}
           </main>
         </div>
+        <PWAInstallPrompt />
       </body>
     </html>
   )

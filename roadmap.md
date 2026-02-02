@@ -155,10 +155,10 @@
 ## Phase 8: Landing Page & Marketing ⏸️ NOT STARTED
 
 ### Landing Page
-- [ ] Hero section: "Read 3x Faster. Retain More. Be More Productive."
-- [ ] Value proposition section
+- [x] Hero section: "Read 3x Faster. Retain More. Be More Productive."
+- [x] Value proposition section
 - [ ] Embedded demo or preview
-- [ ] FAQ section
+- [x] FAQ section
 - [ ] Pricing section
 
 ### CTA

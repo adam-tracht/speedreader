@@ -1,57 +1,109 @@
-# Building Mode Prompt
+# SpeedReader Implementation Plan
 
-## Instructions
-
-0a. Study `specs/*` with up to 50 parallel Sonnet subagents to learn the application specifications.
-0b. Study @IMPLEMENTATION_PLAN.md.
-0c. For reference, the application source code is in `src/*`.
-
-1. Your task is to implement functionality per the specifications using parallel subagents. Follow @IMPLEMENTATION_PLAN.md and choose the most important item to address. Before making changes, search the codebase (don't assume not implemented) using Sonnet subagents. You may use up to 50 parallel Sonnet subagents for searches/reads and only 1 Sonnet subagent for build/tests. Use Opus subagents when complex reasoning is needed (debugging, architectural decisions).
-
-2. After implementing functionality or resolving problems, run the tests for that unit of code that was improved. If functionality is missing then it's your job to add it as per the application specifications. Ultrathink.
-
-3. When you discover issues, immediately update @IMPLEMENTATION_PLAN.md with your findings using a subagent. When resolved, update and remove the item.
-
-4. When the tests pass, update @IMPLEMENTATION_PLAN.md, then `git add -A` then `git commit` with a message describing the changes. After the commit, `git push`.
-
-## Guardrails (Higher Number = More Critical)
-
-99999. Important: When authoring documentation, capture the why — tests and implementation importance.
-
-999999. Important: Single sources of truth, no migrations/adapters. If tests unrelated to your work fail, resolve them as part of the increment.
-
-9999999. As soon as there are no build or test errors create a git tag. If there are no git tags start at 0.0.0 and increment patch by 1 for example 0.0.1 if 0.0.0 does not exist.
-
-99999999. You may add extra logging if required to debug issues.
-
-999999999. Keep @IMPLEMENTATION_PLAN.md current with learnings using a subagent — future work depends on this to avoid duplicating efforts. Update especially after finishing your turn.
-
-9999999999. When you learn something new about how to run the application, update @AGENTS.md using a subagent but keep it brief. For example if you run commands multiple times before learning the correct command then that file should be updated.
-
-99999999999. For any bugs you notice, resolve them or document them in @IMPLEMENTATION_PLAN.md using a subagent even if it is unrelated to the current piece of work.
-
-999999999999. Implement functionality completely. Placeholders and stubs waste efforts and time redoing the same work.
-
-9999999999999. When @IMPLEMENTATION_PLAN.md becomes large periodically clean out the items that are completed from the file using a subagent.
-
-99999999999999. If you find inconsistencies in the specs/* then use an Opus subagent with 'ultrathink' requested to update the specs.
-
-999999999999999. IMPORTANT: Keep @AGENTS.md operational only — status updates and progress notes belong in `IMPLEMENTATION_PLAN.md`. A bloated AGENTS.md pollutes every future loop's context.
-
-9999999999999999. VISUAL WORK: When building dashboards, web UIs, or anything visual — USE THE BROWSER TOOL to actually view the page. Don't just write code and assume it works:
-   - `browser action=open targetUrl="http://localhost:PORT"` to open
-   - `browser action=snapshot` to see the current state
-   - Verify layout, styling, data display actually works
-   - Visual bugs are invisible without visual verification
+**Generated:** February 2, 2026
+**Current Status:** Phases 1-6 Complete, starting Phase 7-9
 
 ---
 
-## Customization Notes
+## Completed Work ✅
 
-Adjust paths if your source code isn't in `src/`:
-- `src/*` → your source directory
+- Phase 1: Core RSVP reader (display, controls, text input)
+- Phase 2: Authentication (NextAuth, Google/GitHub OAuth, user accounts)
+- Phase 3: Library & Persistence (save texts, history, stats)
+- Phase 4: Usage tracking & paywall (10k free words, $5/mo tier)
+- Phase 5: URL scraping (@extractus/article-extractor)
+- Phase 6: Stripe integration (checkout, webhooks, customer portal)
 
-Adjust validation commands in AGENTS.md for your project:
-- Tests: `npm test`, `pytest`, `go test ./...`, etc.
-- Typecheck: `tsc --noEmit`, `mypy .`, etc.
-- Lint: `eslint .`, `ruff .`, etc.
+---
+
+## Remaining Work
+
+### Priority 1: PWA Features (Phase 7)
+**Spec:** `specs/pwa-features.md`
+
+**Tasks:**
+1. Install next-pwa package
+2. Configure PWA in next.config.js (manifest.json, service worker)
+3. Create app icons (72x72, 96x96, 128x128, 144x144, 152x152, 192x192, 384x384, 512x512)
+4. Create manifest.json with app metadata
+5. Implement service worker for offline caching
+6. Add install prompt UI component
+7. Test PWA installation on mobile and desktop
+8. Test offline reading capability
+
+**Acceptance:** App installable, works offline, launches fullscreen
+
+---
+
+### Priority 2: Landing Page Completion (Phase 8)
+**Spec:** `specs/landing-page.md`
+
+**Tasks:**
+1. Create landing page route (/ or /home)
+2. Build hero section with headline, subheadlines, CTAs
+3. Build value proposition section (problem/solution/benefits)
+4. Build features section (all capabilities listed)
+5. Build embedded demo with functional reader preview
+6. Build how-it-works step-by-step section
+7. Build FAQ section with expandable answers
+8. Build pricing section (free vs pro tier comparison)
+9. Build final CTA section
+10. Add sticky navigation header
+11. Implement scroll-triggered animations
+12. Add social proof/testimonials section
+13. Ensure mobile-first responsive design
+14. Add SEO meta tags and structured data
+15. Match dark theme styling (gray-900 bg, white text, red accents)
+16. Reuse shadcn/ui components where possible
+
+**Acceptance:** Page loads <2s, CTAs prominent, demo works, mobile-responsive, SEO optimized
+
+---
+
+### Priority 3: Deployment & Polish (Phase 9)
+**Spec:** `specs/deployment-and-polish.md`
+
+**Tasks:**
+1. Set up Vercel project with GitHub integration
+2. Configure production environment variables (Supabase, Stripe, OAuth)
+3. Run database migrations in production
+4. Configure custom domain (if applicable)
+5. Set up automatic deployments on push to main
+6. Update README with setup instructions, env vars reference, deployment guide
+7. Create comprehensive .env.example
+8. Add API route documentation
+9. Performance optimization (bundle size, lazy loading, images)
+10. Add error boundaries throughout app
+11. Ensure loading states on all pages
+12. Mobile responsiveness audit (test on 320px+)
+13. Accessibility audit (keyboard nav, screen readers, contrast)
+14. Fix any remaining bugs or UI issues
+15. Optimize Lighthouse scores (aim 90+ on all metrics)
+16. Set up production logging
+17. Configure uptime monitoring
+
+**Acceptance:** Deployed to Vercel, Lighthouse >90, mobile works, no console errors, comprehensive README
+
+---
+
+## Blocked Issues
+
+None currently.
+
+---
+
+## Technical Notes
+
+- Tech stack: Next.js 14, TypeScript, Tailwind CSS, Supabase, Stripe, NextAuth
+- Dark theme: gray-900 bg, white text, red accents (#dc2626)
+- Port: localhost:3000 for dev
+- Database: Supabase (already configured with migrations)
+- Stripe: Test mode for now, production keys needed for deployment
+
+---
+
+## Next Steps
+
+1. Start with PWA Features (Priority 1) — foundation for installable app
+2. Then Landing Page (Priority 2) — marketing and user acquisition
+3. Finally Deployment & Polish (Priority 3) — production-ready

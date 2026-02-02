@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
-import { Play, Pause, SkipForward, SkipBack, BookOpen, Zap, TrendingUp, Shield, Cloud, BarChart, Link2, Save, Clock, Check, ArrowRight, ChevronDown, ChevronUp, Star } from "lucide-react"
+import { Play, Pause, SkipForward, SkipBack, BookOpen, Zap, TrendingUp, Shield, Cloud, BarChart, Link2, Save, Clock, Check, ArrowRight, ChevronDown, ChevronUp, Star, History } from "lucide-react"
 
 const sampleText = "Welcome to SpeedReader! This is a demo of how RSVP (Rapid Serial Visual Presentation) works. Instead of your eyes scanning left to right across a page, words appear one at a time in the center of your screen. This eliminates eye movement and peripheral distractions, allowing your brain to focus entirely on each word. Most readers can double or triple their reading speed with this method while maintaining or even improving comprehension. Try adjusting the speed slider to find your comfortable pace. You can pause anytime or skip forward and backward. This technique has been used by speed readers for decades and is now accessible through modern technology."
 
@@ -197,13 +197,13 @@ export default function LandingPage() {
                 </div>
                 
                 <div className="flex justify-center gap-4">
-                  <Button variant="outline" size="icon" onClick={skipBack}>
+                  <Button variant="outline" size="sm" className="h-10 w-10 p-0" onClick={skipBack}>
                     <SkipBack className="w-5 h-5" />
                   </Button>
                   <Button size="lg" onClick={togglePlay} className="min-w-32">
                     {isPlaying ? <><Pause className="w-5 h-5 mr-2" /> Pause</> : <><Play className="w-5 h-5 mr-2" /> Play</>}
                   </Button>
-                  <Button variant="outline" size="icon" onClick={skipForward}>
+                  <Button variant="outline" size="sm" className="h-10 w-10 p-0" onClick={skipForward}>
                     <SkipForward className="w-5 h-5" />
                   </Button>
                 </div>
