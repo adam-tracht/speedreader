@@ -54,7 +54,7 @@
 - ✅ Add API route documentation (API.md) - Complete documentation for all 9 API routes with examples
 - ✅ Performance optimization (bundle size, lazy loading, images) - Enhanced next.config.js with image optimization, SWC minification, console removal, package import optimization; created PERFORMANCE.md with optimization guide
 - ✅ Add error boundaries throughout app - Added ErrorBoundary to landing layout, reader, library, history, and settings pages
-- ⬜ Ensure loading states on all pages
+- ✅ Ensure loading states on all pages - All pages with async operations (reader, library, history, settings) have loading states; hooks (useSavedTexts, useReadingHistory, useSession) provide loading states
 - ⬜ Mobile responsiveness audit (test on 320px+)
 - ⬜ Accessibility audit (keyboard nav, screen readers, contrast)
 - ⬜ Fix any remaining bugs or UI issues
