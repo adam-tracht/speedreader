@@ -1,0 +1,360 @@
+'use client'
+
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Button } from "@/components/ui/button"
+import { Slider } from "@/components/ui/slider"
+import { Textarea } from "@/components/ui/textarea"
+import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+interface ExtractArticleResponse {
+  success: boolean
+  title?: string
+  content?: string
+  error?: string
+}
+
+export default function ReaderPage() {
+  const [words, setWords] = useState<string[]>([])
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [wpm, setWpm] = useState(350)
+  const [progress, setProgress] = useState(0)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  // URL loading states
+  const [urlInput, setUrlInput] = useState('')
+  const [isLoadingUrl, setIsLoadingUrl] = useState(false)
+  const [urlError, setUrlError] = useState<string | null>(null)
+
+  // Split text into words (preserving punctuation attached to words)
+  const splitText = (text: string) => {
+    return text
+      .split(/\s+/)
+      .filter(word => word.length > 0)
+  }
+
+  // Calculate display time per word based on WPM
+  const getWordDelay = () => {
+    return (60 / wpm) * 1000
+  }
+
+  // Play word
+  const playWord = (index: number) => {
+    if (index >= words.length) {
+      setIsPlaying(false)
+      setCurrentIndex(words.length)
+      return
+    }
+    setCurrentIndex(index)
+    setProgress((index + 1) / words.length)
+  }
+
+  // Toggle play/pause
+  const togglePlay = useCallback(() => {
+    if (words.length === 0) return
+
+    if (!isPlaying) {
+      // Starting playback
+      setIsPlaying(true)
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => {
+          const next = prev + 1
+          if (next >= words.length) {
+            clearInterval(interval)
+            setIsPlaying(false)
+            return prev
+          }
+          return next
+        })
+      }, getWordDelay())
+      intervalRef.current = interval
+    } else {
+      // Pausing playback
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+      setIsPlaying(false)
+    }
+  }, [isPlaying, words.length])
+
+  // Rewind functions
+  const jumpTo = (index: number) => {
+    if (index < 0 || index >= words.length) return
+    setCurrentIndex(index)
+    setProgress((index + 1) / words.length)
+  }
+
+  const backTen = () => {
+    setCurrentIndex(Math.max(0, currentIndex - 10))
+    setProgress((Math.max(0, currentIndex - 9)) / words.length)
+  }
+
+  const forwardTen = () => {
+    setCurrentIndex(Math.min(words.length - 1, currentIndex + 10))
+    setProgress((Math.min(words.length - 1, currentIndex + 11)) / words.length)
+  }
+
+  const resetReader = () => {
+    setIsPlaying(false)
+    setCurrentIndex(0)
+    setProgress(0)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [])
+
+  // Handle text paste
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      const wordArray = splitText(text)
+      setWords(wordArray)
+      setCurrentIndex(0)
+      setProgress(0)
+      setUrlError(null)
+    } catch (err) {
+      console.error('Failed to paste text:', err)
+    }
+  }
+
+  // Validate URL format on client side
+  const isValidUrl = (url: string): boolean => {
+    try {
+      const parsed = new URL(url)
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+    } catch {
+      return false
+    }
+  }
+
+  // Load article from URL
+  const handleLoadFromUrl = async () => {
+    // Reset error state
+    setUrlError(null)
+
+    // Trim whitespace
+    const trimmedUrl = urlInput.trim()
+
+    // Validate URL is not empty
+    if (!trimmedUrl) {
+      setUrlError('Please enter a URL')
+      return
+    }
+
+    // Validate URL format
+    if (!isValidUrl(trimmedUrl)) {
+      setUrlError('Please enter a valid URL (must start with http:// or https://)')
+      return
+    }
+
+    // Start loading
+    setIsLoadingUrl(true)
+
+    try {
+      const response = await fetch('/api/extract-article', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: trimmedUrl }),
+      })
+
+      const data: ExtractArticleResponse = await response.json()
+
+      if (!response.ok || !data.success) {
+        setUrlError(data.error || `Failed with status: ${response.status}`)
+        return
+      }
+
+      // Success - load the extracted content
+      if (data.content) {
+        const articleText = data.title ? `${data.title}\n\n${data.content}` : data.content
+        const wordArray = splitText(articleText)
+        setWords(wordArray)
+        setCurrentIndex(0)
+        setProgress(0)
+        setIsPlaying(false)
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+        }
+      }
+    } catch (err) {
+      setUrlError(err instanceof Error ? err.message : 'Failed to fetch article')
+    } finally {
+      setIsLoadingUrl(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4">
+      {/* Header */}
+      <div className="w-full max-w-4xl mb-8 flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-primary">SpeedReader</h1>
+        <div className="flex items-center gap-4">
+          <span className="text-muted-foreground text-sm">WPM: {wpm}</span>
+          <span className="text-muted-foreground text-sm">Word: {currentIndex + 1} / {words.length}</span>
+          <span className="text-muted-foreground text-sm">Progress: {Math.round(progress * 100)}%</span>
+        </div>
+      </div>
+
+      {/* Word Display */}
+      <div className="flex-1 items-center justify-center py-20 flex-grow">
+        <Card className="p-16 text-center min-w-[300px] min-h-[150px] flex items-center justify-center">
+          <CardContent className="p-0">
+            <p className="reader-word text-6xl font-bold word-transition">
+              {words[currentIndex] || 'Ready...'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Controls */}
+      <div className="w-full max-w-4xl space-y-4">
+        {/* Text Input */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-primary">Load Text</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* URL Input Section */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">
+                Load from URL
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  className="flex-1 px-3 py-2 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="https://example.com/article"
+                  value={urlInput}
+                  onChange={(e) => {
+                    setUrlInput(e.target.value)
+                    setUrlError(null)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleLoadFromUrl()
+                    }
+                  }}
+                  disabled={isLoadingUrl}
+                />
+                <Button
+                  onClick={handleLoadFromUrl}
+                  disabled={isLoadingUrl}
+                  variant="default"
+                >
+                  {isLoadingUrl ? 'Loading...' : 'Load from URL'}
+                </Button>
+              </div>
+              {urlError && (
+                <p className="text-sm text-destructive">{urlError}</p>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-border"></div>
+
+            {/* Direct Text Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">
+                Or paste text directly
+              </label>
+              <Textarea
+                className="w-full h-32 font-mono text-sm resize-none"
+                placeholder="Paste your text here, or click load sample..."
+                onChange={(e) => {
+                  const wordArray = splitText(e.target.value)
+                  setWords(wordArray)
+                  setUrlError(null)
+                }}
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const sampleText = "Speed reading is the art of reading text rapidly. By displaying one word at a time, you can dramatically increase your reading speed while maintaining comprehension. RSVP stands for Rapid Serial Visual Presentation. This technique helps you focus on individual words and reduces eye movement across the page.\n\nTry pasting an article or story here to experience the power of speed reading!"
+                  const wordArray = splitText(sampleText)
+                  setWords(wordArray)
+                  setUrlError(null)
+                }}
+              >
+                Load Sample Text
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handlePaste}
+              >
+                Paste from Clipboard
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* WPM Slider */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-primary">Speed ({wpm} WPM)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Slider value={[wpm]} onValueChange={(v) => setWpm(v[0])} min={100} max={600} step={10} />
+          </CardContent>
+        </Card>
+
+        {/* Transport Controls */}
+        <div className="flex justify-center gap-4">
+          <Button
+            variant="outline"
+            onClick={resetReader}
+            disabled={currentIndex === 0}
+          >
+            Restart
+          </Button>
+          <Button
+            variant="outline"
+            onClick={backTen}
+            disabled={currentIndex === 0}
+          >
+            Back 10
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => togglePlay()}
+          >
+            {isPlaying ? 'Pause' : 'Play'}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={forwardTen}
+            disabled={currentIndex >= words.length}
+          >
+            Forward 10
+          </Button>
+        </div>
+
+        {/* Progress Bar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex justify-between text-sm text-muted-foreground mb-2">
+              <span>Progress</span>
+              <span>{Math.round(progress * 100)}% ({words.length} words)</span>
+            </div>
+            <Progress value={progress * 100} />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}

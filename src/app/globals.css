@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .dark {
+    --background: 60 50% 2%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 98%;
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 0% 98%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 64%;
+    --border: 0 72% 51%;
+    --radius: 0.5rem;
+  }
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  @apply bg-background text-foreground;
+}
+
+/* Smooth transitions */
+.word-transition {
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Reader styles */
+.reader-word {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transition: all 0.1s ease-in-out;
+}
+
+@media (min-width: 640px) {
+  .reader-word {
+    font-size: 3.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .reader-word {
+    font-size: 4rem;
+  }
+}
