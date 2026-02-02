@@ -94,22 +94,22 @@ export default function HistoryPage() {
         ) : (
           <>
             {stats && (
-              <div className="mb-8 grid grid-cols-4 gap-4">
-                <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 text-center">
-                  <div className="text-3xl font-bold text-blue-400">{stats.total_sessions}</div>
-                  <div className="text-sm text-gray-400 mt-2">Sessions</div>
+              <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 md:p-6 text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-blue-400">{stats.total_sessions}</div>
+                  <div className="text-xs md:text-sm text-gray-400 mt-2">Sessions</div>
                 </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 text-center">
-                  <div className="text-3xl font-bold text-green-400">{stats.total_words_read}</div>
-                  <div className="text-sm text-gray-400 mt-2">Words Read</div>
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 md:p-6 text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-green-400">{stats.total_words_read}</div>
+                  <div className="text-xs md:text-sm text-gray-400 mt-2">Words Read</div>
                 </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 text-center">
-                  <div className="text-3xl font-bold text-purple-400">{stats.avg_wpm}</div>
-                  <div className="text-sm text-gray-400 mt-2">Avg WPM</div>
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 md:p-6 text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-purple-400">{stats.avg_wpm}</div>
+                  <div className="text-xs md:text-sm text-gray-400 mt-2">Avg WPM</div>
                 </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 text-center">
-                  <div className="text-3xl font-bold text-orange-400">{formatTime(stats.total_duration_seconds)}</div>
-                  <div className="text-sm text-gray-400 mt-2">Time Spent</div>
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 md:p-6 text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-orange-400">{formatTime(stats.total_duration_seconds)}</div>
+                  <div className="text-xs md:text-sm text-gray-400 mt-2">Time Spent</div>
                 </div>
               </div>
             )}
@@ -131,25 +131,25 @@ export default function HistoryPage() {
                     key={entry.id}
                     className="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:border-blue-500 transition-colors"
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-xl font-bold text-white">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
+                      <h3 className="text-lg sm:text-xl font-bold text-white">
                         {index + 1}. {entry.title}
                       </h3>
                       <span className="text-sm text-gray-400">{formatDate(entry.created_at)}</span>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4 text-sm">
                       <div>
-                        <div className="text-gray-400">Words</div>
+                        <div className="text-gray-400 text-xs sm:text-sm">Words</div>
                         <div className="text-white font-medium">{entry.words_read}</div>
                       </div>
                       {entry.wpm && (
                         <div>
-                          <div className="text-gray-400">WPM</div>
+                          <div className="text-gray-400 text-xs sm:text-sm">WPM</div>
                           <div className="text-white font-medium">{entry.wpm}</div>
                         </div>
                       )}
                       <div>
-                        <div className="text-gray-400">Time</div>
+                        <div className="text-gray-400 text-xs sm:text-sm">Time</div>
                         <div className="text-white font-medium">{formatTime(entry.duration_seconds)}</div>
                       </div>
                     </div>
