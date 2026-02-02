@@ -59,12 +59,12 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
-      <section className="pt-20 pb-16 px-6">
+      <section className="pt-16 pb-12 sm:pt-20 sm:pb-16 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
             Read 3x Faster. Retain More. Be More Productive.
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
             Stop losing focus. Stop re-reading sentences. RSVP speed reading eliminates eye movement and peripheral distractions so you can fly through content and actually remember what you read.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
