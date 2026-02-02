@@ -301,46 +301,50 @@ export default function ReaderPage() {
       <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-5xl space-y-6">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-3 sm:gap-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button
                 onClick={() => router.push("/")}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
               >
                 ← Home
               </button>
-              <div className="text-gray-400">|</div>
+              <div className="text-gray-400 hidden sm:block">|</div>
               {isBookmarked && (
-                <span className="text-sm text-green-400 flex items-center">
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  Saved Text
+                <span className="text-xs sm:text-sm text-green-400 flex items-center">
+                  <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Saved Text</span>
                 </span>
               )}
             </div>
-            
-            <div className="flex items-center space-x-4">
+
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
               <span className="text-gray-400">{currentWordIndex + 1} / {words.length}</span>
-              <span className="text-gray-400">|</span>
+              <span className="text-gray-400 hidden sm:inline">|</span>
               <span className="text-gray-400">{wpm} WPM</span>
-              <span className="text-gray-400">|</span>
+              <span className="text-gray-400 hidden sm:inline">|</span>
               <span className="text-gray-400">
                 {Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toString().padStart(2, '0')}
               </span>
-              <span className="text-gray-400">|</span>
               <button
                 onClick={togglePause}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-sm min-w-[40px]"
+                aria-label={isPaused ? "Play" : "Pause"}
               >
-                {isPaused ? "▶ Resume" : "⏸ Pause"}
+                {isPaused ? "▶" : "⏸"}
               </button>
-              <span className="text-gray-400">|</span>
               {user && !loadingUsage && <UsageStatsCompact usage={usage} />}
             </div>
           </div>
 
-          <div className="text-center mb-8">
-            <div className="bg-gray-800 border-2 border-gray-700 rounded-2xl px-12 py-16">
-              <h1 className="text-5xl font-bold text-white mb-4 tracking-wide">
+          <div className="text-center mb-8 px-4 sm:px-0">
+            <div className="bg-gray-800 border-2 border-gray-700 rounded-2xl px-6 py-8 sm:px-12 sm:py-16">
+              <h1
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 tracking-wide break-words reader-word"
+                aria-live="polite"
+                aria-atomic="true"
+                role="status"
+              >
                 {words[currentWordIndex] || "Press Space or ArrowRight to begin"}
               </h1>
             </div>
@@ -384,7 +388,7 @@ export default function ReaderPage() {
             </div>
           </div>
 
-          <div className="flex justify-center space-x-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:space-x-4 mb-6">
             <button
               onClick={handleReset}
               className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
@@ -393,7 +397,7 @@ export default function ReaderPage() {
             </button>
             <button
               onClick={() => setShowBookmarkDialog(true)}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center"
             >
               <BookmarkPlus className="w-5 h-5 mr-2" />
               Save to Library
@@ -407,8 +411,9 @@ export default function ReaderPage() {
             </button>
           </div>
 
-          <div className="text-center text-gray-500 text-sm">
-            Space/→ Next word | ← Previous word | P Pause | R Reset | B Save | F Finish
+          <div className="text-center text-gray-500 text-xs sm:text-sm px-4">
+            <span className="hidden sm:inline">Space/→ Next word | ← Previous word | P Pause | R Reset | B Save | F Finish</span>
+            <span className="sm:hidden">Tap to navigate • P to pause • R to reset</span>
           </div>
         </div>
       </div>
