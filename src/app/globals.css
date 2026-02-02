@@ -25,6 +25,20 @@ body {
   @apply bg-background text-foreground;
 }
 
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
 /* Smooth transitions */
 .word-transition {
   transition: opacity 0.15s ease-in-out;
@@ -32,19 +46,39 @@ body {
 
 /* Reader styles */
 .reader-word {
-  font-size: 3rem;
+  font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.2;
   transition: all 0.1s ease-in-out;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 375px) {
+  .reader-word {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 414px) {
+  .reader-word {
+    font-size: 2.25rem;
+  }
 }
 
 @media (min-width: 640px) {
+  .reader-word {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 768px) {
   .reader-word {
     font-size: 3.5rem;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .reader-word {
     font-size: 4rem;
   }
