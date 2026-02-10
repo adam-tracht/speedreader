@@ -27,9 +27,10 @@ export default auth((req) => {
   }
   
   // Redirect to reader if logged in user tries to access landing page
-  if (path === "/" && isLoggedIn) {
-    return NextResponse.redirect(new URL("/reader", req.url))
-  }
+  // DISABLED for testing - always show landing page
+  // if (path === "/" && isLoggedIn) {
+  //   return NextResponse.redirect(new URL("/reader", req.url))
+  // }
   
   // Continue normally
   return NextResponse.next()
