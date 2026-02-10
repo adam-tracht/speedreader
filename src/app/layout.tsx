@@ -59,7 +59,7 @@ export default async function RootLayout({
   const session = await getSession()
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <script
           type="application/ld+json"
@@ -92,23 +92,23 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="min-h-screen flex flex-col">
-          <header className="bg-gray-800 border-b border-gray-700 px-6 py-4 sticky top-0 z-50">
+          <header className="bg-card border-b border px-6 py-4 sticky top-0 z-50">
             <div className="max-w-5xl mx-auto flex justify-between items-center">
               <div className="flex items-center space-x-8">
-                <Link href={session?.user ? "/reader" : "/"} className="text-2xl font-bold text-white hover:text-red-400 transition-colors">
+                <Link href={session?.user ? "/reader" : "/"} className="text-2xl font-bold text-foreground hover:text-primary transition-colors">
                   SpeedReader
                 </Link>
                 {session?.user ? (
                   <div className="flex items-center space-x-4">
-                    <Link href="/reader" className="flex items-center text-gray-400 hover:text-white transition-colors">
+                    <Link href="/reader" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
                       <Home className="w-5 h-5 mr-2" />
                       <span>Reader</span>
                     </Link>
-                    <Link href="/library" className="flex items-center text-gray-400 hover:text-white transition-colors">
+                    <Link href="/library" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
                       <Book className="w-5 h-5 mr-2" />
                       <span>Library</span>
                     </Link>
-                    <Link href="/history" className="flex items-center text-gray-400 hover:text-white transition-colors">
+                    <Link href="/history" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
                       <History className="w-5 h-5 mr-2" />
                       <span>History</span>
                     </Link>
@@ -116,7 +116,7 @@ export default async function RootLayout({
                 ) : (
                   <Link
                     href="/"
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Home
                   </Link>
@@ -124,13 +124,13 @@ export default async function RootLayout({
               </div>
               {session?.user ? (
                 <div className="flex items-center space-x-4">
-                  <div className="text-gray-300 text-sm">{session.user.email}</div>
+                  <div className="text-foreground text-sm">{session.user.email}</div>
                   <button
                     onClick={() => {
                       localStorage.removeItem("speedreader_session")
                       window.location.href = "/auth"
                     }}
-                    className="flex items-center text-gray-400 hover:text-white transition-colors"
+                    className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <LogOut className="w-5 h-5 mr-2" />
                     <span>Logout</span>
@@ -139,7 +139,7 @@ export default async function RootLayout({
               ) : (
                 <Link
                   href="/auth"
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="bg-primary hover:opacity-90 text-primary-foreground px-4 py-2 rounded-lg transition-colors"
                 >
                   Start Reading
                 </Link>

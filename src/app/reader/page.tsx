@@ -5,9 +5,10 @@ import { useSavedTexts } from "@/hooks/useSavedTexts"
 import { useReadingHistory } from "@/hooks/useReadingHistory"
 import { useState, useEffect, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { BookOpen, BookmarkPlus, Zap, Crown, AlertCircle } from "lucide-react"
+import { BookOpen, BookmarkPlus, Zap, Crown, AlertCircle, Link2, Loader2 } from "lucide-react"
 import { CheckoutButton } from "@/components/stripe/CheckoutButton"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { Slider } from "@/components/ui/slider"
 
 export interface UsageData {
   wordsRead: number
@@ -42,7 +43,7 @@ function UsageStatsCompact({ usage }: { usage: UsageData | null }) {
 function UpgradePrompt({ onDismiss }: { onDismiss?: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-      <div className="bg-gray-800 border border-yellow-500/50 rounded-xl p-6 w-full max-w-md mx-4">
+      <div className="bg-card border border-yellow-500/50 rounded-xl p-6 w-full max-w-md mx-4">
         <CheckoutButton
           onCheckoutStart={() => console.log("Checkout started")}
           onCheckoutComplete={onDismiss}
@@ -63,9 +64,9 @@ export default function ReaderPage() {
   const [text, setText] = useState("")
   const [words, setWords] = useState<string[]>([])
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
-  const [wpm, setWpm] = useState(0)
+  const [targetWpm, setTargetWpm] = useState([300])
+  const [isPlaying, setIsPlaying] = useState(false)
   const [startTime, setStartTime] = useState<Date | null>(null)
-  const [isPaused, setIsPaused] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isSaving, setIsSaving] = useState(false)
   const [isBookmarked, setIsBookmarked] = useState(false)
@@ -76,6 +77,10 @@ export default function ReaderPage() {
   const [usage, setUsage] = useState<UsageData | null>(null)
   const [loadingUsage, setLoadingUsage] = useState(true)
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
+  const [urlInput, setUrlInput] = useState("")
+  const [loadingUrl, setLoadingUrl] = useState(false)
+  const [urlError, setUrlError] = useState("")
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const trackedWordsRef = useRef(0)
   const lastTrackedIndexRef = useRef(0)
 
@@ -155,28 +160,68 @@ export default function ReaderPage() {
 
   const wordCountCurrent = words.length
 
+  // RSVP speed reading effect
+  useEffect(() => {
+    if (isPlaying && currentWordIndex < words.length - 1) {
+      intervalRef.current = setInterval(() => {
+        setCurrentWordIndex((prev) => {
+          const newIndex = prev + 1
+
+          // Track words for usage stats
+          const wordsSinceLastTrack = newIndex - lastTrackedIndexRef.current
+          if (wordsSinceLastTrack >= 10) {
+            trackedWordsRef.current += wordsSinceLastTrack
+            lastTrackedIndexRef.current = newIndex
+            trackWords(wordsSinceLastTrack)
+          }
+
+          // Update saved text position
+          if (savedTextId && isBookmarked) {
+            updateSavedTextPosition(newIndex)
+          }
+
+          localStorage.setItem("speedreader_position", String(newIndex))
+
+          if (newIndex >= words.length - 1) {
+            setIsPlaying(false)
+            return newIndex
+          }
+
+          return newIndex
+        })
+      }, 60000 / targetWpm[0])
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [isPlaying, targetWpm, currentWordIndex, words.length, savedTextId, isBookmarked])
+
+  // Track elapsed time
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isPaused && startTime) {
+      if (isPlaying && startTime) {
         const now = new Date()
         const elapsed = Math.floor((now.getTime() - startTime.getTime()) / 1000)
         setElapsedTime(elapsed)
-        
-        const newWpm = Math.round((currentWordIndex * 60) / Math.floor((now.getTime() - startTime.getTime()) / 1000))
-        setWpm(newWpm > 0 ? newWpm : 0)
       }
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [isPaused, startTime, currentWordIndex])
+  }, [isPlaying, startTime])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === " " || e.key === "ArrowRight") {
+      e.preventDefault()
       handleNextWord()
     } else if (e.key === "ArrowLeft") {
       handlePreviousWord()
-    } else if (e.key === " " || e.key === "Escape") {
-      togglePause()
+    } else if (e.key === "p" || e.key === "P" || e.key === "Escape") {
+      togglePlayPause()
     }
   }
 
@@ -209,27 +254,30 @@ export default function ReaderPage() {
       const newIndex = currentWordIndex - 1
       setCurrentWordIndex(newIndex)
       localStorage.setItem("speedreader_position", String(newIndex))
-      
+
       if (savedTextId && isBookmarked) {
         updateSavedTextPosition(newIndex)
       }
     }
   }
 
-  const togglePause = () => {
-    setIsPaused(!isPaused)
-    if (!isPaused && !startTime) {
+  const togglePlayPause = () => {
+    if (words.length === 0) return
+
+    setIsPlaying(!isPlaying)
+    if (!isPlaying && !startTime) {
       setStartTime(new Date())
     }
   }
 
   const handleReset = () => {
     setCurrentWordIndex(0)
-    setWpm(0)
     setStartTime(null)
     setElapsedTime(0)
-    setIsPaused(false)
+    setIsPlaying(false)
     localStorage.setItem("speedreader_position", "0")
+    trackedWordsRef.current = 0
+    lastTrackedIndexRef.current = 0
   }
 
   const handleSaveBookmark = async () => {
@@ -256,7 +304,7 @@ export default function ReaderPage() {
 
   const updateSavedTextPosition = async (position: number) => {
     if (!savedTextId || !user) return
-    
+
     try {
       await fetch(`/api/saved-texts/${savedTextId}`, {
         method: 'PATCH',
@@ -268,17 +316,60 @@ export default function ReaderPage() {
     }
   }
 
+  const handleExtractFromUrl = async () => {
+    if (!urlInput.trim()) {
+      setUrlError("Please enter a URL")
+      return
+    }
+
+    setLoadingUrl(true)
+    setUrlError("")
+
+    try {
+      const response = await fetch("/api/extract-article", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: urlInput.trim() })
+      })
+
+      const result = await response.json()
+
+      if (result.success && result.content) {
+        setText(result.content)
+        const wordArray = result.content.split(/\s+/).filter(w => w.trim().length > 0)
+        setWords(wordArray)
+        setCurrentWordIndex(0)
+        localStorage.setItem("speedreader_text", result.content)
+        localStorage.setItem("speedreader_position", "0")
+        setUrlInput("")
+        setIsPlaying(false)
+        setStartTime(null)
+        setElapsedTime(0)
+      } else {
+        setUrlError(result.error || "Failed to extract article content")
+      }
+    } catch (err) {
+      console.error("Failed to extract article:", err)
+      setUrlError("Failed to extract article. Please try again.")
+    } finally {
+      setLoadingUrl(false)
+    }
+  }
+
   const handleFinish = () => {
     if (!user || !isBookmarked) return
-    
+
     const titlePreview = words.slice(0, Math.min(currentWordIndex, 20)).join(" ")
+    // Calculate actual WPM: (words read / elapsed minutes)
+    const actualWpm = elapsedTime > 0 ? Math.round((currentWordIndex * 60) / elapsedTime) : null
+
     addEntry({
       title: savedTextId ? titlePreview : "Untitled",
       words_read: currentWordIndex,
-      wpm: wpm > 0 ? wpm : null,
+      wpm: actualWpm,
       duration_seconds: elapsedTime > 0 ? elapsedTime : null
     })
-    
+
     alert("Reading session recorded!")
   }
 
@@ -289,8 +380,8 @@ export default function ReaderPage() {
 
   if (loadingSavedText) {
     return (
-      <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary"></div>
         <p className="ml-4">Loading saved text...</p>
       </div>
     )
@@ -298,18 +389,18 @@ export default function ReaderPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+      <div className="min-h-screen bg-background text-foreground flex flex-col" onKeyDown={handleKeyDown} tabIndex={0}>
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-5xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-3 sm:gap-4">
             <div className="flex items-center space-x-2 sm:space-x-4">
               <button
                 onClick={() => router.push("/")}
-                className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
+                className="text-muted-foreground hover:text-foreground transition-colors text-sm sm:text-base"
               >
                 ← Home
               </button>
-              <div className="text-gray-400 hidden sm:block">|</div>
+              <div className="text-muted-foreground hidden sm:block">|</div>
               {isBookmarked && (
                 <span className="text-xs sm:text-sm text-green-400 flex items-center">
                   <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
@@ -319,28 +410,28 @@ export default function ReaderPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-              <span className="text-gray-400">{currentWordIndex + 1} / {words.length}</span>
-              <span className="text-gray-400 hidden sm:inline">|</span>
-              <span className="text-gray-400">{wpm} WPM</span>
-              <span className="text-gray-400 hidden sm:inline">|</span>
-              <span className="text-gray-400">
+              <span className="text-muted-foreground">{currentWordIndex + 1} / {words.length}</span>
+              <span className="text-muted-foreground hidden sm:inline">|</span>
+              <span className="text-foreground font-semibold">{targetWpm[0]} WPM</span>
+              <span className="text-muted-foreground hidden sm:inline">|</span>
+              <span className="text-muted-foreground">
                 {Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toString().padStart(2, '0')}
               </span>
               <button
-                onClick={togglePause}
-                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-sm min-w-[40px]"
-                aria-label={isPaused ? "Play" : "Pause"}
+                onClick={togglePlayPause}
+                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-card hover:bg-muted rounded-lg transition-colors text-sm min-w-[40px]"
+                aria-label={isPlaying ? "Pause" : "Play"}
               >
-                {isPaused ? "▶" : "⏸"}
+                {isPlaying ? "⏸" : "▶"}
               </button>
               {user && !loadingUsage && <UsageStatsCompact usage={usage} />}
             </div>
           </div>
 
           <div className="text-center mb-8 px-4 sm:px-0">
-            <div className="bg-gray-800 border-2 border-gray-700 rounded-2xl px-6 py-8 sm:px-12 sm:py-16">
+            <div className="bg-card border-2 border rounded-2xl px-6 py-8 sm:px-12 sm:py-16">
               <h1
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 tracking-wide break-words reader-word"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-wide break-words reader-word"
                 aria-live="polite"
                 aria-atomic="true"
                 role="status"
@@ -351,11 +442,86 @@ export default function ReaderPage() {
           </div>
 
           <div className="mb-8">
-            <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+            <div className="h-3 bg-muted rounded-full overflow-hidden">
               <div
-                className="h-full bg-blue-600 transition-all duration-300"
+                className="h-full bg-primary transition-all duration-300"
                 style={{ width: `${((currentWordIndex / Math.max(words.length - 1, 1)) * 100)}%` }}
               />
+            </div>
+          </div>
+
+          {/* WPM Slider Control */}
+          <div className="mb-6 px-4 sm:px-0">
+            <div className="bg-card border rounded-lg p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" />
+                  Reading Speed
+                </label>
+                <span className="text-2xl font-bold text-primary">{targetWpm[0]} WPM</span>
+              </div>
+              <Slider
+                value={targetWpm}
+                onValueChange={setTargetWpm}
+                min={100}
+                max={600}
+                step={50}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                <span>100 WPM</span>
+                <span>350 WPM</span>
+                <span>600 WPM</span>
+              </div>
+            </div>
+          </div>
+
+          {/* URL Input Section */}
+          <div className="mb-6 px-4 sm:px-0">
+            <div className="bg-card border rounded-lg p-4 sm:p-6">
+              <label className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
+                <Link2 className="w-4 h-4 text-primary" />
+                Import from URL
+              </label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="url"
+                  value={urlInput}
+                  onChange={(e) => {
+                    setUrlInput(e.target.value)
+                    setUrlError("")
+                  }}
+                  placeholder="Paste article URL here..."
+                  className="flex-1 bg-muted border text-foreground rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  disabled={loadingUrl}
+                />
+                <button
+                  onClick={handleExtractFromUrl}
+                  disabled={loadingUrl || !urlInput.trim()}
+                  className="px-6 py-3 bg-primary hover:opacity-90 text-primary-foreground rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  {loadingUrl ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Extracting...
+                    </>
+                  ) : (
+                    <>
+                      <Link2 className="w-4 h-4" />
+                      Extract Article
+                    </>
+                  )}
+                </button>
+              </div>
+              {urlError && (
+                <p className="text-red-400 text-sm mt-2 flex items-center gap-1">
+                  <AlertCircle className="w-4 h-4" />
+                  {urlError}
+                </p>
+              )}
+              <p className="text-xs text-muted-foreground mt-2">
+                Paste any article URL and we'll extract the content automatically
+              </p>
             </div>
           </div>
 
@@ -364,10 +530,10 @@ export default function ReaderPage() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Or paste your text here..."
-              className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-4 min-h-[200px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-card border text-foreground rounded-lg p-4 min-h-[200px] focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <div className="mt-2 flex justify-between items-center">
-              <span className="text-sm text-gray-400">
+              <span className="text-sm text-muted-foreground">
                 {words.length} words
               </span>
               <button
@@ -379,9 +545,11 @@ export default function ReaderPage() {
                   localStorage.setItem("speedreader_position", "0")
                   setStartTime(null)
                   setElapsedTime(0)
-                  setWpm(0)
+                  setIsPlaying(false)
+                  trackedWordsRef.current = 0
+                  lastTrackedIndexRef.current = 0
                 }}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-primary hover:opacity-90 text-primary-foreground rounded-lg transition-colors"
               >
                 Load Text
               </button>
@@ -390,14 +558,21 @@ export default function ReaderPage() {
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:space-x-4 mb-6">
             <button
+              onClick={togglePlayPause}
+              disabled={words.length === 0}
+              className="px-6 py-3 bg-primary hover:opacity-90 text-primary-foreground rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isPlaying ? "⏸ Pause" : "▶ Play"}
+            </button>
+            <button
               onClick={handleReset}
-              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              className="px-6 py-3 bg-card hover:bg-muted text-foreground rounded-lg transition-colors"
             >
               Reset
             </button>
             <button
               onClick={() => setShowBookmarkDialog(true)}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center"
+              className="px-6 py-3 bg-primary hover:opacity-90 text-primary-foreground rounded-lg transition-colors flex items-center justify-center"
             >
               <BookmarkPlus className="w-5 h-5 mr-2" />
               Save to Library
@@ -411,30 +586,30 @@ export default function ReaderPage() {
             </button>
           </div>
 
-          <div className="text-center text-gray-500 text-xs sm:text-sm px-4">
-            <span className="hidden sm:inline">Space/→ Next word | ← Previous word | P Pause | R Reset | B Save | F Finish</span>
-            <span className="sm:hidden">Tap to navigate • P to pause • R to reset</span>
+          <div className="text-center text-muted-foreground text-xs sm:text-sm px-4">
+            <span className="hidden sm:inline">Space/→ Next word | ← Previous word | P Play/Pause | R Reset | B Save | F Finish</span>
+            <span className="sm:hidden">Tap to navigate • P to play/pause • R to reset</span>
           </div>
         </div>
       </div>
 
       {showBookmarkDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-white mb-4">Save to Library</h2>
+          <div className="bg-card border rounded-xl p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold text-foreground mb-4">Save to Library</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-300 text-sm mb-2">Title</label>
+                <label className="block text-foreground text-sm mb-2">Title</label>
                 <input
                   type="text"
                   value={bookmarkTitle}
                   onChange={(e) => setBookmarkTitle(e.target.value)}
                   placeholder="Text title..."
-                  className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-muted border text-foreground rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <p className="text-gray-400 text-sm mb-4">
+                <p className="text-muted-foreground text-sm mb-4">
                   This will save the current text to your library. You can continue reading from where you left off later.
                 </p>
               </div>
@@ -444,14 +619,14 @@ export default function ReaderPage() {
                     setShowBookmarkDialog(false)
                     setBookmarkTitle("")
                   }}
-                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="px-4 py-2 bg-card hover:bg-muted text-foreground rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveBookmark}
                   disabled={isSaving || !bookmarkTitle.trim()}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-primary hover:opacity-90 text-primary-foreground rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSaving ? "Saving..." : "Save"}
                 </button>

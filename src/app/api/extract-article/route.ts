@@ -1,5 +1,6 @@
 import { extract } from '@extractus/article-extractor';
 import { NextRequest, NextResponse } from 'next/server';
+import * as htmlToText from 'html-to-text';
 
 interface Article {
   title?: string | null;
@@ -26,6 +27,24 @@ function isValidUrl(url: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Strip HTML tags from content and convert to plain text
+ * Uses html-to-text library for better results than simple regex
+ */
+function stripHtml(html: string | null | undefined): string {
+  if (!html) {
+    return '';
+  }
+
+  return htmlToText.convert(html, {
+    wordwrap: false,
+    selectors: [
+      { selector: 'img', format: 'skip' },
+      { selector: 'a', options: { ignoreHref: true } },
+    ],
+  });
 }
 
 export async function POST(
@@ -62,12 +81,16 @@ export async function POST(
       );
     }
 
-    // Return successful response
+    // Strip HTML from content and title
+    const cleanTitle = stripHtml(article.title).trim();
+    const cleanContent = stripHtml(article.content).trim();
+
+    // Return successful response with plain text
     return NextResponse.json(
       {
         success: true,
-        title: article.title,
-        content: article.content,
+        title: cleanTitle,
+        content: cleanContent,
       },
       { status: 200 }
     );

@@ -77,13 +77,13 @@ export default function SettingsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
         <div className="flex-1 flex flex-col items-center justify-center p-8">
           <h1 className="text-2xl font-bold mb-4">Sign in Required</h1>
-          <p className="text-gray-400">Please sign in to access settings.</p>
+          <p className="text-muted-foreground">Please sign in to access settings.</p>
           <button
             onClick={() => router.push("/signin")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-primary hover:opacity-90 text-primary-foreground px-6 py-2 rounded-lg transition-colors"
           >
             Sign In
           </button>
@@ -96,35 +96,35 @@ export default function SettingsPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <div className="mb-8">
           <button
             onClick={() => router.push("/")}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
             ← Back to Home
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold text-white mb-8">Settings</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-8">Settings</h1>
 
         {error && (
-          <div className="mb-6 bg-red-900 border border-red-700 text-red-100 p-4 rounded-lg">
+          <div className="mb-6 bg-red-900/50 border border-red-700 text-red-100 p-4 rounded-lg">
             <p className="font-medium">{error}</p>
           </div>
         )}
 
         {/* Subscription Section */}
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+        <div className="bg-card border rounded-xl p-6 mb-6">
+          <h2 className="text-xl font-bold text-foreground mb-4 flex items-center">
             <Crown className="w-6 h-6 mr-2" />
             Subscription
           </h2>
 
           {loadingTier ? (
             <div className="flex justify-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           ) : isPremium ? (
             <div className="space-y-4">
@@ -133,7 +133,7 @@ export default function SettingsPage() {
                   <Crown className="w-5 h-5 mr-2" />
                   Premium Member
                 </div>
-                <p className="text-gray-300">
+                <p className="text-foreground">
                   You have unlimited access to SpeedReader. Thank you for your support!
                 </p>
               </div>
@@ -141,7 +141,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleOpenPortal}
                 disabled={loadingPortal}
-                className="w-full flex items-center justify-center px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center px-4 py-3 bg-card hover:bg-muted text-foreground rounded-lg transition-colors disabled:opacity-50"
               >
                 <CreditCard className="w-5 h-5 mr-2" />
                 {loadingPortal ? "Opening..." : "Manage Subscription"}
@@ -150,24 +150,24 @@ export default function SettingsPage() {
           ) : (
             <div className="space-y-4">
               <div className="text-center">
-                <p className="text-gray-300 mb-4">
+                <p className="text-foreground mb-4">
                   Upgrade to Premium for unlimited speed reading and exclusive features.
                 </p>
-                <div className="text-3xl font-bold text-white mb-4">
-                  $5<span className="text-lg font-normal text-gray-400">/month</span>
+                <div className="text-3xl font-bold text-foreground mb-4">
+                  $5<span className="text-lg font-normal text-muted-foreground">/month</span>
                 </div>
               </div>
 
-              <div className="bg-gray-900 rounded-lg p-4 space-y-2">
-                <div className="flex items-center text-gray-300">
+              <div className="bg-muted rounded-lg p-4 space-y-2">
+                <div className="flex items-center text-foreground">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mr-3" />
                   <span>Unlimited words per month</span>
                 </div>
-                <div className="flex items-center text-gray-300">
+                <div className="flex items-center text-foreground">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mr-3" />
                   <span>Priority support</span>
                 </div>
-                <div className="flex items-center text-gray-300">
+                <div className="flex items-center text-foreground">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mr-3" />
                   <span>Early access to new features</span>
                 </div>
@@ -182,13 +182,13 @@ export default function SettingsPage() {
         </div>
 
         {/* Account Section */}
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-bold text-white mb-4">Account</h2>
+        <div className="bg-card border rounded-xl p-6 mb-6">
+          <h2 className="text-xl font-bold text-foreground mb-4">Account</h2>
 
           <div className="space-y-3">
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <span className="text-gray-400">Email</span>
-              <span className="text-white">{user?.email}</span>
+            <div className="flex justify-between items-center py-2 border-b border">
+              <span className="text-muted-foreground">Email</span>
+              <span className="text-foreground">{user?.email}</span>
             </div>
 
             <button
@@ -202,26 +202,26 @@ export default function SettingsPage() {
 
         {/* Stats Section */}
         {history && history.length > 0 && (
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Reading Statistics</h2>
+          <div className="bg-card border rounded-xl p-6">
+            <h2 className="text-xl font-bold text-foreground mb-4">Reading Statistics</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-900 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white mb-1">
+              <div className="bg-muted rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold text-foreground mb-1">
                   {history.length}
                 </div>
-                <div className="text-gray-400 text-sm">Total Sessions</div>
+                <div className="text-muted-foreground text-sm">Total Sessions</div>
               </div>
 
-              <div className="bg-gray-900 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white mb-1">
+              <div className="bg-muted rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold text-foreground mb-1">
                   {history.reduce((sum, h) => sum + (h.words_read || 0), 0).toLocaleString()}
                 </div>
-                <div className="text-gray-400 text-sm">Words Read</div>
+                <div className="text-muted-foreground text-sm">Words Read</div>
               </div>
 
-              <div className="bg-gray-900 rounded-lg p-4 text-center">
-                <div className="text-3xl font-bold text-white mb-1">
+              <div className="bg-muted rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold text-foreground mb-1">
                   {Math.round(
                     history
                       .filter(h => h.wpm !== null)
@@ -229,7 +229,7 @@ export default function SettingsPage() {
                       history.filter(h => h.wpm !== null).length
                   ).toLocaleString()}
                 </div>
-                <div className="text-gray-400 text-sm">Avg WPM</div>
+                <div className="text-muted-foreground text-sm">Avg WPM</div>
               </div>
             </div>
           </div>

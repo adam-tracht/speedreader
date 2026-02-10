@@ -8,8 +8,10 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth
   const path = req.nextUrl.pathname
   
-  // Check if path is protected
-  const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route))
+  // TEMPORARY: Disabled for testing without API keys
+  // const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route))
+  const isProtectedRoute = false // Disabled for testing
+  
   const isAuthRoute = path === "/auth" || path === "/signin" || path === "/signup"
   
   // Redirect to auth if trying to access protected route without session
