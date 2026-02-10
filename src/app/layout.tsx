@@ -92,39 +92,40 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="min-h-screen flex flex-col">
-          <header className="bg-card border-b border px-6 py-4 sticky top-0 z-50">
-            <div className="max-w-5xl mx-auto flex justify-between items-center">
-              <div className="flex items-center space-x-8">
+          <header className="bg-card border-b border px-4 py-3 sm:px-6 sm:py-4 sticky top-0 z-50">
+            <div className="max-w-5xl mx-auto flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8 w-full sm:w-auto">
                 <Link href={session?.user ? "/reader" : "/"} className="text-2xl font-bold text-foreground hover:text-primary transition-colors">
                   SpeedReader
                 </Link>
                 {session?.user ? (
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center gap-4 overflow-x-auto sm:overflow-visible whitespace-nowrap w-full sm:w-auto">
                     <Link href="/reader" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
-                      <Home className="w-5 h-5 mr-2" />
-                      <span>Reader</span>
+                      <Home className="w-5 h-5 sm:mr-2" />
+                      <span className="hidden sm:inline">Reader</span>
                     </Link>
                     <Link href="/library" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
-                      <Book className="w-5 h-5 mr-2" />
-                      <span>Library</span>
+                      <Book className="w-5 h-5 sm:mr-2" />
+                      <span className="hidden sm:inline">Library</span>
                     </Link>
                     <Link href="/history" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
-                      <History className="w-5 h-5 mr-2" />
-                      <span>History</span>
+                      <History className="w-5 h-5 sm:mr-2" />
+                      <span className="hidden sm:inline">History</span>
                     </Link>
                   </div>
                 ) : (
                   <Link
                     href="/"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Home
+                    <Home className="w-5 h-5 sm:mr-2" />
+                    <span className="hidden sm:inline">Home</span>
                   </Link>
                 )}
               </div>
               {session?.user ? (
                 <div className="flex items-center space-x-4">
-                  <div className="text-foreground text-sm">{session.user.email}</div>
+                  <div className="text-foreground text-sm hidden sm:block">{session.user.email}</div>
                   <button
                     onClick={() => {
                       localStorage.removeItem("speedreader_session")
@@ -132,8 +133,8 @@ export default async function RootLayout({
                     }}
                     className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <LogOut className="w-5 h-5 mr-2" />
-                    <span>Logout</span>
+                    <LogOut className="w-5 h-5 sm:mr-2" />
+                    <span className="hidden sm:inline">Logout</span>
                   </button>
                 </div>
               ) : (

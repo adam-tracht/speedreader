@@ -92,7 +92,7 @@ export class ErrorBoundary extends React.Component<
                 <div className="flex-1">
                   <h1 className="text-2xl font-bold mb-2">Something went wrong</h1>
                   <p className="text-gray-400">
-                    We're sorry, but something unexpected happened. Please try again.
+                    We&apos;re sorry, but something unexpected happened. Please try again.
                   </p>
                 </div>
               </div>

@@ -520,7 +520,7 @@ export default function ReaderPage() {
                 </p>
               )}
               <p className="text-xs text-muted-foreground mt-2">
-                Paste any article URL and we'll extract the content automatically
+                Paste any article URL and we&apos;ll extract the content automatically
               </p>
             </div>
           </div>
