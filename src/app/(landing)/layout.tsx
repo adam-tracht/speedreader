@@ -1,27 +1,17 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "../globals.css"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "SpeedReader - Read 3x Faster",
   description: "Speed reading RSVP reader with speed control. Read 3x faster, retain more, be more productive.",
 }
 
+// NOTE: Only the root layout (src/app/layout.tsx) should render <html> and <body>
+// and import global CSS. This layout is just a wrapper for the landing route group.
 export default function LandingLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ErrorBoundary>
-          {children}
-        </ErrorBoundary>
-      </body>
-    </html>
-  )
+  return <ErrorBoundary>{children}</ErrorBoundary>
 }
