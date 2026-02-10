@@ -56,7 +56,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
@@ -94,7 +94,7 @@ export default function LandingPage() {
       </section>
 
       {/* Problem & Solution Section */}
-      <section className="py-20 px-6 bg-gray-800/50">
+      <section className="py-20 px-6 bg-muted/30">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12">
             {/* Problem */}
@@ -162,21 +162,21 @@ export default function LandingPage() {
 
           {/* Benefits */}
           <div className="mt-16 grid md:grid-cols-3 gap-6">
-            <Card className="border-red-600/50 bg-gray-800">
+            <Card className="border-red-600/50 bg-card">
               <CardContent className="p-6 text-center">
                 <Zap className="w-12 h-12 text-red-400 mx-auto mb-4" />
                 <h3 className="text-xl font-bold mb-2">Read 3x Faster</h3>
                 <p className="text-gray-400">Zero loss of comprehension</p>
               </CardContent>
             </Card>
-            <Card className="border-red-600/50 bg-gray-800">
+            <Card className="border-red-600/50 bg-card">
               <CardContent className="p-6 text-center">
                 <TrendingUp className="w-12 h-12 text-red-400 mx-auto mb-4" />
                 <h3 className="text-xl font-bold mb-2">Retain More</h3>
                 <p className="text-gray-400">Never distracted while reading</p>
               </CardContent>
             </Card>
-            <Card className="border-red-600/50 bg-gray-800">
+            <Card className="border-red-600/50 bg-card">
               <CardContent className="p-6 text-center">
                 <Clock className="w-12 h-12 text-red-400 mx-auto mb-4" />
                 <h3 className="text-xl font-bold mb-2">Save Time</h3>
@@ -193,7 +193,7 @@ export default function LandingPage() {
           <h2 className="text-4xl font-bold text-center mb-4">Everything You Need</h2>
           <p className="text-xl text-gray-400 text-center mb-12">Powerful features for speed reading success</p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="border-gray-700 bg-gray-800">
+            <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <Zap className="w-6 h-6 text-red-400" />
@@ -204,7 +204,7 @@ export default function LandingPage() {
                 <p className="text-gray-400">RSVP display with one word at a time for maximum focus</p>
               </CardContent>
             </Card>
-            <Card className="border-gray-700 bg-gray-800">
+            <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <TrendingUp className="w-6 h-6 text-red-400" />
@@ -215,7 +215,7 @@ export default function LandingPage() {
                 <p className="text-gray-400">WPM control from 100-600+ to find your optimal pace</p>
               </CardContent>
             </Card>
-            <Card className="border-gray-700 bg-gray-800">
+            <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <BookOpen className="w-6 h-6 text-red-400" />
@@ -226,7 +226,7 @@ export default function LandingPage() {
                 <p className="text-gray-400">Save articles and texts to your personal library</p>
               </CardContent>
             </Card>
-            <Card className="border-gray-700 bg-gray-800">
+            <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <History className="w-6 h-6 text-red-400" />
@@ -237,7 +237,7 @@ export default function LandingPage() {
                 <p className="text-gray-400">Track all your reading sessions with detailed statistics</p>
               </CardContent>
             </Card>
-            <Card className="border-gray-700 bg-gray-800">
+            <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <Shield className="w-6 h-6 text-red-400" />
@@ -248,7 +248,7 @@ export default function LandingPage() {
                 <p className="text-gray-400">Automatically save your reading position — resume anytime</p>
               </CardContent>
             </Card>
-            <Card className="border-gray-700 bg-gray-800">
+            <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <Clock className="w-6 h-6 text-red-400" />
@@ -264,16 +264,16 @@ export default function LandingPage() {
       </section>
 
       {/* Demo Section */}
-      <section id="demo" className="py-20 px-6 bg-gray-800/50">
+      <section id="demo" className="py-20 px-6 bg-muted/30">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-4">See It In Action</h2>
           <p className="text-xl text-gray-400 text-center mb-8">Try RSVP speed reading right now — no signup required</p>
 
-          <Card className="border-red-600/50 bg-gray-900 mb-8">
+          <Card className="border-red-600/50 bg-card mb-8">
             <CardContent className="p-8">
               {/* Demo Display */}
-              <div className="bg-gray-800 rounded-lg p-12 mb-6 min-h-[200px] flex items-center justify-center">
-                <p className="text-5xl md:text-6xl font-bold text-white">
+              <div className="bg-muted rounded-lg p-12 mb-6 min-h-[200px] flex items-center justify-center">
+                <p className="text-5xl md:text-6xl font-bold text-foreground">
                   {demoWords[currentWordIndex]}
                 </p>
               </div>
@@ -367,25 +367,25 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-6 bg-gray-800/50">
+      <section className="py-20 px-6 bg-muted/30">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-4">What Readers Say</h2>
           <p className="text-xl text-gray-400 text-center mb-12">Join thousands of satisfied speed readers</p>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <p className="text-gray-300 mb-4">"Cut my reading time by 70% for work reports. I can finally keep up with my industry reading."</p>
                 <p className="text-sm text-gray-500">— Sarah M., Product Manager</p>
               </CardContent>
             </Card>
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <p className="text-gray-300 mb-4">"Finally getting through my book backlog. RSVP makes reading feel effortless."</p>
                 <p className="text-sm text-gray-500">— James K., Software Engineer</p>
               </CardContent>
             </Card>
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <p className="text-gray-300 mb-4">"Best speed reader I've used — actually retains comprehension. The demo sold me immediately."</p>
                 <p className="text-sm text-gray-500">— Emily R., Graduate Student</p>
@@ -403,7 +403,7 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Free Tier */}
-            <Card className="border-gray-700 bg-gray-800">
+            <Card className="border-border bg-card">
               <CardHeader className="text-center pb-6">
                 <CardTitle className="text-2xl mb-2">Free</CardTitle>
                 <p className="text-4xl font-bold mb-2">$0<span className="text-lg font-normal text-gray-400">/month</span></p>
@@ -431,7 +431,7 @@ export default function LandingPage() {
             </Card>
 
             {/* Pro Tier */}
-            <Card className="border-red-600/50 bg-gray-800 relative">
+            <Card className="border-red-600/50 bg-card relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-1 rounded-full text-sm font-medium">
                 Most Popular
               </div>
@@ -466,48 +466,48 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 px-6 bg-gray-800/50">
+      <section className="py-20 px-6 bg-muted/30">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-4">Frequently Asked Questions</h2>
           <p className="text-xl text-gray-400 text-center mb-12">Everything you need to know</p>
 
           <div className="space-y-6">
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold mb-2">How does RSVP speed reading actually work?</h3>
                 <p className="text-gray-400">RSVP (Rapid Serial Visual Presentation) eliminates eye movement by displaying one word at a time at a fixed point. This prevents the saccadic eye movements that consume time during traditional reading, and removes peripheral distractions that split your attention. Your brain processes single words faster than scanning across lines.</p>
               </CardContent>
             </Card>
 
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold mb-2">Will this work for me? I've never tried speed reading before.</h3>
                 <p className="text-gray-400">Absolutely! RSVP reading is easier to learn than traditional speed reading techniques. Most people adapt within 5-10 minutes of trying the demo. Start at 300 WPM and increase as you get comfortable. The key is removing eye movement — your brain naturally processes words faster than you think.</p>
               </CardContent>
             </Card>
 
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold mb-2">Can I import articles from websites?</h3>
                 <p className="text-gray-400">Yes! Simply paste any article URL and we'll extract the content automatically. You can also paste text directly from any source — PDFs, documents, emails, or anything else you can copy.</p>
               </CardContent>
             </Card>
 
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold mb-2">Do my saved texts sync across devices?</h3>
                 <p className="text-gray-400">Yes, your library, reading history, and progress all sync across all devices you use with SpeedReader. Start reading on your phone, continue on your laptop — everything stays in sync.</p>
               </CardContent>
             </Card>
 
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold mb-2">What's included in the free vs paid tier?</h3>
                 <p className="text-gray-400">The free tier includes 10,000 words per month, which is enough to try RSVP reading and see if it works for you. The Pro tier ($5/month) removes all word limits and includes priority support. All features are available in both tiers.</p>
               </CardContent>
             </Card>
 
-            <Card className="border-gray-700 bg-gray-900">
+            <Card className="border-border bg-card">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold mb-2">Can I cancel anytime?</h3>
                 <p className="text-gray-400">Yes, you can cancel your Pro subscription at any time with no questions asked. Your account will revert to the free tier at the end of your billing period. We use Stripe for secure payment processing.</p>
