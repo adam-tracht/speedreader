@@ -38,11 +38,17 @@ export default function HistoryPage() {
   }
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "Unknown date"
+
     const date = new Date(dateString)
+    if (Number.isNaN(date.getTime())) {
+      return "Invalid date"
+    }
+
     const now = new Date()
     const diffMs = now.getTime() - date.getTime()
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-    
+
     if (diffDays === 0) return "Today"
     if (diffDays === 1) return "Yesterday"
     if (diffDays < 7) return `${diffDays} days ago`
